@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-24",
+  "provider": "published Catalyst QuickML",
+  "self_test": "SUCCESS",
+  "self_test_rows": 1000,
+  "cli_rows": 1000,
+  "csv_columns": [
+    "timestamp",
+    "target_demand_kw"
+  ],
+  "timestamp_order_preserved": true,
+  "all_predictions_finite": true,
+  "request_mode": "batch",
+  "relay_batches_per_1000_rows": 10,
+  "test_eval_sha256": "e6e8529730f21f9b8d3b2f9c73ea18a7b0cf1b848597041d7f87f14e15ec4f17",
+  "input_sha256": "99c8ec1760eea307154f8d0cddde066b078249c54c4d2773a004cdc489c246ee",
+  "cli_predictions_sha256": "700bdcd9ba4ca4ff1c793a8db1b96f178985d217d74c496df2900f63ff174964"
+}

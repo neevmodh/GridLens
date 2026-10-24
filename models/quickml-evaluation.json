@@ -1,0 +1,26 @@
+{
+  "provider": "Zoho Catalyst QuickML",
+  "project_id": "92358000000016001",
+  "dataset_id": "10127000000002017",
+  "pipeline_id": "10127000000003004",
+  "model_id": "10127000000003007",
+  "model_version_id": "10127000000003010",
+  "endpoint_id": "10127000000002049",
+  "algorithm": "XGB Regression",
+  "training_rows": 4000,
+  "feature_schema": "engineered",
+  "evaluation_source": "QuickML built-in model evaluation; split controlled by AutoML",
+  "metrics": {
+    "mean_absolute_error": 6.54336,
+    "mean_squared_error": 68.44757,
+    "root_mean_squared_error": 8.2733,
+    "root_mean_squared_log_error": 0.0655,
+    "r2_score": 0.97293,
+    "mean_absolute_percentage_error": 4.82754
+  },
+  "limitations": [
+    "Not a hidden-test or competition score.",
+    "Not directly comparable with the chronological local development holdout.",
+    "No local-model uncertainty interval is attached to QuickML predictions."
+  ]
+}

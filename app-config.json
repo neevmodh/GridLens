@@ -1,0 +1,19 @@
+{
+  "command": "python3 -m gunicorn -c gunicorn.conf.py app:application",
+  "build_path": "build",
+  "stack": "python_3_12",
+  "env_variables": {
+    "GRIDLENS_DATA_DIR": "/tmp/gridlens",
+    "GRIDLENS_PUBLIC_ORIGIN": "https://gridlens-50047133296.development.catalystappsail.in",
+    "GRIDLENS_HISTORY_TABLE": "92358000000019001",
+    "QUICKML_PROJECT_ID": "92358000000016001",
+    "ZOHO_ORG_ID": "60093095288",
+    "QUICKML_AUTH_MODE": "catalyst",
+    "QUICKML_FEATURE_SCHEMA": "engineered",
+    "QUICKML_REQUEST_MODE": "batch"
+  },
+  "memory": 256,
+  "scripts": {},
+  "raw": {},
+  "catalyst_auth": false
+}

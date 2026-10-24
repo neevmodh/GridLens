@@ -1,0 +1,103 @@
+{
+  "selected": "additive",
+  "selected_name": "Weather + hourly interactions",
+  "candidates": [
+    {
+      "kind": "legacy",
+      "name": "Original ridge baseline",
+      "cv_rmse_kw": 12.2941,
+      "folds": [
+        {
+          "train_rows": 1600,
+          "test_rows": 400,
+          "rmse_kw": 11.7576,
+          "mae_kw": 9.5576
+        },
+        {
+          "train_rows": 2400,
+          "test_rows": 400,
+          "rmse_kw": 12.8081,
+          "mae_kw": 10.2901
+        }
+      ]
+    },
+    {
+      "kind": "additive",
+      "name": "Weather + hourly interactions",
+      "cv_rmse_kw": 10.394,
+      "folds": [
+        {
+          "train_rows": 1600,
+          "test_rows": 400,
+          "rmse_kw": 8.5638,
+          "mae_kw": 6.75
+        },
+        {
+          "train_rows": 2400,
+          "test_rows": 400,
+          "rmse_kw": 11.947,
+          "mae_kw": 8.5471
+        }
+      ]
+    },
+    {
+      "kind": "boosted",
+      "name": "Gradient boosted trees",
+      "cv_rmse_kw": 10.1641,
+      "folds": [
+        {
+          "train_rows": 1600,
+          "test_rows": 400,
+          "rmse_kw": 8.4455,
+          "mae_kw": 6.7969
+        },
+        {
+          "train_rows": 2400,
+          "test_rows": 400,
+          "rmse_kw": 11.6314,
+          "mae_kw": 8.5515
+        }
+      ]
+    },
+    {
+      "kind": "hybrid",
+      "name": "Weather/calendar + residual boosting",
+      "cv_rmse_kw": 10.4577,
+      "folds": [
+        {
+          "train_rows": 1600,
+          "test_rows": 400,
+          "rmse_kw": 8.7353,
+          "mae_kw": 6.8617
+        },
+        {
+          "train_rows": 2400,
+          "test_rows": 400,
+          "rmse_kw": 11.9341,
+          "mae_kw": 8.5778
+        }
+      ]
+    }
+  ],
+  "selection_policy": "Simplest model within one fold standard error of best rolling-origin RMSE",
+  "one_standard_error_kw": 1.593,
+  "validation": {
+    "rmse_kw": 9.2494,
+    "mae_kw": 7.4241,
+    "fit_rows": 3200,
+    "validation_rows": 800,
+    "strategy": "chronological final 800 rows; model selected on earlier rolling origins",
+    "previous_rmse_kw": 11.7753,
+    "mean_baseline_rmse_kw": 72.8077
+  },
+  "uncertainty": {
+    "label": "90% empirical residual reference band",
+    "nominal_pct": 90,
+    "radius_kw": 17.3449,
+    "calibration_rows": 400,
+    "calibration_start": "2015-04-27 15:00:00",
+    "calibration_end": "2015-05-14 06:00:00",
+    "heldout_coverage_pct": 94.62,
+    "notice": "Historical residual reference only. Serial dependence, seasonal shift and final refitting mean future coverage is not guaranteed."
+  }
+}

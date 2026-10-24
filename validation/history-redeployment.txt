@@ -1,0 +1,4 @@
+24 October 2026
+A client retained its browser session in memory, saved a QuickML forecast, waited for an AppSail redeployment, then restored the same run and checked its predictions.
+Run: b89bad99-05cf-45ea-9a98-6be1987892f3
+SUCCESS: saved forecast survived an AppSail redeployment.

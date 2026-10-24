@@ -1,0 +1,8 @@
+HACKSPHERE 3.0 - Pre-Submission Self-Tester    
+ Found 'predict.py'.
+ Found 'sample_test_input.csv'.
+ Successfully imported 'predict(input_df)' function.
+Loaded 1000 test rows from 'sample_test_input.csv'.
+Your predict.py script is completely valid!
+   Sample output values: [242.38 234.46 234.14]...
+SUCCESS
