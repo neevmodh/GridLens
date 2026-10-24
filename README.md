@@ -1,157 +1,218 @@
-# GridLens — Microgrid Intelligence
+<div align="center">
 
-**Team: neevmodh205**  
-**Participant: Neev Modh (solo)**
+# GridLens
 
-A deployed HackSphere 3.0 application: ingest 24 hourly weather rows, forecast demand, evaluate the official grid switching rules, simulate battery state, inspect alerts, and export the dispatch plan.
+### Microgrid demand forecasting and dispatch planning
 
-**Repository:** https://github.com/neevmodh/GridLens
+A working Zoho Catalyst application that turns hourly weather telemetry into a 24-hour demand forecast, a power-source schedule, and a battery feasibility plan.
 
-**Presentation:** [7-slide PowerPoint](presentation/GridLens_neevmodh205.pptx)
+**Team neevmodh205 · Neev Modh · Solo participant · HackSphere 3.0**
 
-**Live website:** https://gridlens-50047133296.development.catalystappsail.in
+[**Live application**](https://gridlens-50047133296.development.catalystappsail.in/) &nbsp; · &nbsp; [**7-slide presentation**](presentation/GridLens_neevmodh205.pptx) &nbsp; · &nbsp; [**Requirement audit**](docs/REQUIREMENTS_AUDIT.md) &nbsp; · &nbsp; [**Verification evidence**](docs/VALIDATION.md)
 
-**Cloud model:** a published Catalyst QuickML XGBoost regression model trained from the 4,000 supplied labeled rows. QuickML's built-in evaluation reports **8.2733 kW RMSE**, **6.54336 kW MAE** and **R² 0.97293**. A complete hosted 24-hour QuickML forecast and the unchanged official 1,000-row self-test have been verified with live predictions. These metrics are not a hidden-test score or the chronological local-model benchmark. See [deployment record](docs/CLOUD_STATUS.md).
+![GridLens concept illustration: campus buildings, solar panels, battery storage and grid connections](presentation/assets/microgrid-cover.png)
 
-![GridLens dashboard preview](docs/live-dashboard.png)
+*Concept illustration. The application forecasts and simulates a microgrid; it does not operate physical equipment.*
 
-## Research-informed version 2
+</div>
 
-The interface now uses a full-width operations layout with larger charts and readable navigation. New features include an empirical uncertainty reference band, threshold-watch diagnostics, training-range checks, a battery scenario lab, minimum-capacity feasibility estimates, and an in-app model/research page.
+## At a glance
 
-The selected weather/calendar regression reaches **9.2494 kW RMSE** and **7.4241 kW MAE** on the same 800-row chronological development holdout used for the original baseline (**11.7753 kW RMSE**). This is about a 21% RMSE reduction. These are retrospective development results, not an untouched external test or QuickML result. See [research and decisions](docs/RESEARCH.md), [benchmark results](models/benchmark.json), and [next Zoho steps](docs/ZOHO_NEXT_STEPS.md).
+| Item | Implementation |
+| --- | --- |
+| Cloud platform | Zoho Catalyst AppSail, QuickML and Data Store |
+| Published model | XGB Regression, trained from 4,000 supplied labeled telemetry rows |
+| Planning horizon | 24 consecutive hourly observations |
+| Forecast inputs | Timestamp, ambient temperature, humidity and solar irradiance |
+| Interface | Responsive operations dashboard, CSV/form ingestion and battery scenario lab |
+| Saved runs | Durable, browser-session-scoped Catalyst Data Store records |
+| Deliverables | Live website, full source, `predict(input_df)`, CSV CLI and presentation |
+| Verification record | 24 October 2026: 36 tests passed, official 1,000-row evaluator returned `SUCCESS` using live QuickML |
 
-## Run locally
+**GridLens keeps forecast accuracy, policy compliance and battery feasibility separate.** The published model predicts demand. The controller applies the challenge’s exact rules. The battery simulation reports whether the selected storage plan can serve the scheduled load.
 
-Python 3.10 or newer is required. The local application uses the Python standard library and needs no dependency installation or frontend build.
+## Explore the project
 
-```sh
-cd gridlens
-python3 app.py
-```
+[Product walkthrough](#product-walkthrough) · [Architecture](#architecture) · [Quick start](#quick-start) · [Input contract](#input-contract) · [Dispatch rules](#dispatch-rules) · [Model and evidence](#model-and-evidence) · [API](#api) · [Cloud configuration](#cloud-configuration) · [Project structure](#project-structure)
 
-Open <http://127.0.0.1:8080>. If you are already inside this directory, omit `cd gridlens`. Set `PORT` to choose another port. The local server binds to loopback by default.
+## Product walkthrough
 
-The hosted app opens the latest saved forecast, or generates a live QuickML forecast using 24 official historical sample rows. A local server without cloud configuration uses the explicitly labeled local preview. These are 2015 data, not live weather. Every new run records its actual input timestamps. Use **New forecast** to upload or paste a CSV, edit hourly weather inputs, choose QuickML, and change battery assumptions.
+![Actual GridLens desktop dashboard with demand forecasts, source dispatch and battery state](presentation/assets/desktop-dashboard.png)
 
-Timestamps are treated as timezone-unspecified wall-clock values; the hour in the supplied text controls the evening rule. The dashboard preserves those times without converting them to the browser's timezone.
+1. Open the [live application](https://gridlens-50047133296.development.catalystappsail.in/). It restores the latest forecast available to your browser or generates a QuickML forecast from the official historical sample.
+2. Choose **New forecast**. Upload or paste a CSV, or edit the hourly weather inputs. Supply 24 consecutive hours.
+3. Inspect demand, overload hours and the source schedule. Select an hour to see its dispatch reason and simulated battery charge.
+4. Open **Scenario lab** to compare battery assumptions against the same forecast. Scenarios reuse the saved predictions without another QuickML request.
+5. Export the forecast CSV or the JSON control-signal log. **Run history** restores earlier forecasts from the same browser session.
 
-## Included functionality
+The sample contains **2015 historical telemetry**, not current weather. The dashboard preserves the input dates and labels sample data explicitly.
 
-- Responsive dashboard with forecast chart, threshold overlays, hourly source schedule, selected-hour dispatch, battery state, and actionable insights.
-- CSV upload, drag and drop, paste, and editable 24-hour telemetry form.
-- Server-side validation of schema, consecutive hourly timestamps, numeric ranges, missing weather values, and battery settings.
-- Blank weather cells and DataFrame NaN values are imputed from the labeled training dataset's medians. Infinite values, invalid numbers, gaps, and duplicate dashboard timestamps are rejected.
-- Exact official switching rules: demand **> 160 kW OR hour 18–22 inclusive** uses storage; otherwise main grid. Demand **≥ 200 kW** independently raises a critical alert.
-- Forecast explorer with storage/overload filters, browser-scoped run history, restore, and CSV export.
-- Selected weather/calendar model with a reproducible rolling-origin comparison and chronological validation result, plus a configurable server-only QuickML adapter with optional OAuth refresh.
-- Submission-compatible `predict(input_df)` and `--input` / `--output` CSV interface. No silent local fallback in QuickML mode.
+<details>
+<summary><strong>Mobile preview</strong></summary>
+<br>
+<img src="docs/mobile-preview.png" alt="GridLens mobile dashboard with responsive navigation and forecast summary cards" width="320">
+
+</details>
+
+### What the application includes
+
+| Capability | Behavior |
+| --- | --- |
+| Telemetry ingestion | CSV upload, drag and drop, paste, and an editable hourly form |
+| Data preparation | Schema, timestamp, range and finite-number checks, plus training-median imputation |
+| Demand visualization | Interactive demand and battery SOC charts with threshold overlays and hour selection |
+| Dispatch planning | Exact source rules, hourly decisions, transition events and independent overload alerts |
+| Battery analysis | Capacity, starting charge, reserve, efficiency and output-power limits |
+| Scenario comparison | Baseline/candidate SOC, storage shortfall and forecast-specific capacity advice |
+| Provenance | Explicit QuickML/local labels, input source, actual timestamps and model details |
+| Downloads | Hourly dispatch CSV and 24 scheduled `SET_POWER_SOURCE` commands in JSON |
 
 ## Architecture
 
-```text
-Browser: static HTML / CSS / JavaScript + SVG chart
-  └── Python WSGI API
-        ├── Shared telemetry validation and feature preparation
-        ├── Explicit local preview OR published QuickML REST endpoint
-        ├── Official transition controller
-        ├── Battery simulation and overload/shortfall events
-        └── Session-isolated Catalyst Data Store history (SQLite for local development)
+```mermaid
+flowchart LR
+    U["Browser dashboard"] --> A["Python WSGI API<br/>Catalyst AppSail"]
+    A --> V["Validate telemetry<br/>and prepare shared features"]
+    V --> Q["Published XGB model<br/>Catalyst QuickML"]
+    V --> L["Local development model<br/>Explicit preview mode"]
+    Q --> C["Dispatch controller<br/>and battery simulation"]
+    L --> C
+    C --> H[("Catalyst Data Store<br/>Session-scoped runs")]
+    C --> R["Charts, alerts<br/>and downloadable plans"]
+    H --> A
+    R --> U
+    T["4,000 labeled rows"] --> F["Shared feature transformation"]
+    F --> Q
 ```
 
-The same Python feature transformation is used for QuickML training export and inference. No actual demand values, future demand labels, or unavailable lagged demand are used as input features.
+The frontend uses HTML, CSS, JavaScript and SVG. AppSail serves it alongside the Python API through Gunicorn. Training export and inference use the same feature transformation. No target labels or unavailable future-demand lags enter the feature vector.
 
-### API
+Hosted requests use managed AppSail credentials for QuickML and Data Store. Unconfigured local development uses the checked-in preview model and SQLite. A QuickML failure produces an explicit error; it never silently substitutes local predictions.
 
-| Route | Purpose |
-| --- | --- |
-| `GET /api/health` | Local model metadata and configuration presence; does not claim live QuickML connectivity |
-| `GET /api/sample?offset=9` | A consecutive 24-row window from the supplied unlabeled sample |
-| `POST /api/scenario` | Compare battery settings for an existing run without changing its forecast or calling QuickML again |
-| `POST /api/forecast` | Validate, predict, apply dispatch rules, simulate battery, and record a run |
-| `POST /api/predict` | Live QuickML predictions for 1–100 independent rows, preserving order; used by the evaluator script |
-| `GET /api/history` | Up to 20 recent runs belonging to the browser cookie |
-| `GET /api/runs/<id>` | Restore a run belonging to the browser cookie |
-| `GET /api/runs/<id>/export` | Download its full dispatch CSV |
-| `GET /api/runs/<id>/signals` | Download 24 scheduled switching commands and independent alerts as JSON |
+## Quick start
 
-Forecast JSON body:
+### Run the local dashboard
 
-```json
-{
-  "provider": "local_preview",
-  "rows": [
-    {"timestamp": "2026-10-24 00:00:00", "ambient_temp_c": 28.5, "humidity_pct": 65, "solar_irradiance_wm2": 0}
-  ],
-  "battery": {"capacity_kwh": 4000, "initial_soc_pct": 80, "reserve_pct": 20, "charge_kw": 80, "max_discharge_kw": 350, "efficiency": 0.95}
-}
+Requires **Python 3.10 or later**. Python 3.12 matches the deployed runtime. The local preview needs no cloud credentials, dependency installation or frontend build.
+
+```sh
+git clone https://github.com/neevmodh/GridLens.git
+cd GridLens
+python3 app.py
 ```
 
-Supply **24 consecutive hourly rows**, not just the illustrative row above. Alternatively replace `rows` with a `csv` string. Set `provider` to `quickml` for the published model.
+Open **http://127.0.0.1:8080**. The local server binds to loopback. Set `PORT` to use another port.
 
-## Connect QuickML
+### Generate predictions using live QuickML
 
-Follow [docs/QUICKML_SETUP.md](docs/QUICKML_SETUP.md) to train, publish, configure, and verify your actual model. Copy `.env.example` to `.env` for local credentials, or configure environment variables in Catalyst. `.env` is ignored and never served or included in deployment packages.
-
-The endpoint's generated sample request is authoritative: request wrappers and batch support can vary. The adapter supports one raw record per call or a list of records, an optional input wrapper, raw or engineered features, and the documented `result[].prediction` response plus the starter `predictions[]` format. Verify these settings with your endpoint before submission.
-
-QuickML errors are returned explicitly; credentials never go to the browser. A successful live forecast establishes a live connection. The health endpoint only says whether configuration is present.
-
-### Hosted environment settings
-
-The deployed AppSail service uses these settings. Keep the endpoint key in Catalyst’s private environment settings; it is intentionally absent from the source archive.
-
-| Variable | Deployed value / purpose |
-| --- | --- |
-| `GRIDLENS_PUBLIC_ORIGIN` | `https://gridlens-50047133296.development.catalystappsail.in` |
-| `GRIDLENS_HISTORY_TABLE` | `92358000000019001` — durable saved forecasts |
-| `GRIDLENS_DATA_DIR` | `/tmp/gridlens` — temporary working directory |
-| `QUICKML_AUTH_MODE` | `catalyst` — managed AppSail authentication |
-| `QUICKML_PROJECT_ID` | `92358000000016001` |
-| `ZOHO_ORG_ID` | `60093095288` |
-| `QUICKML_FEATURE_SCHEMA` | `engineered` |
-| `QUICKML_REQUEST_MODE` | `batch` |
-| `QUICKML_ENDPOINT_KEY` | Private published endpoint key, server only |
-
-Local preview requires none of these variables. Evaluator users can call the deployed relay without credentials. For a new deployment, configure its own project/table IDs, origin and private endpoint key; see the linked deployment guide. The non-secret `app-config.json` template must not replace existing private environment settings without preserving the endpoint key.
-
-## Prediction script and evaluator
-
-Live inference through the deployed application, with no credentials copied to your machine:
+The prediction script calls the deployed application by default. It needs no Zoho credentials on your computer.
 
 ```sh
 python3 predict.py --input sample_test_input.csv --output predictions.csv
 ```
 
-Output columns are exactly `timestamp,target_demand_kw`. One prediction is emitted per input row in its original order. The CLI accepts up to 1,000 rows; the dashboard requires a 24-row window. The function accepts the supplied evaluator's pandas DataFrame or a list of row dictionaries.
+Output has exactly these columns:
 
-By default the script calls the public app's `/api/predict` relay in chunks of at most 100 rows. The relay calls the published QuickML model using AppSail's managed credentials and never substitutes local predictions. `GRIDLENS_PREDICT_URL` can point to another deployment. Direct QuickML OAuth configuration takes precedence when present. Input telemetry is sent to the selected service; credentials remain on the server. Availability and QuickML quota still apply: the deployed batch mode sends ten upstream batch requests for 1,000 rows. Both the official self-test and the full CSV CLI have passed against this deployed model. Account usage and service availability still apply.
-
-Explicit local development test:
-
-```sh
-python3 predict.py --input sample_test_input.csv --output predictions.csv --local-preview
+```csv
+timestamp,target_demand_kw
 ```
 
-The original supplied evaluator requires numpy and pandas:
+`predict(input_df)` accepts the evaluator’s pandas DataFrame or a list of row dictionaries and returns one finite numeric value per row in its original order. The CLI accepts 1–1,000 rows. It divides hosted inference into requests of at most 100 rows, so 1,000 input rows use ten upstream batches with the deployed configuration.
+
+Input telemetry goes to the selected prediction service. Service availability and account usage limits apply. `GRIDLENS_PREDICT_URL` overrides the hosted relay URL. Configured direct QuickML OAuth credentials take precedence over the relay.
+
+For an explicit local development prediction:
+
+```sh
+python3 predict.py --input sample_test_input.csv --output predictions-local.csv --local-preview
+```
+
+### Run the original evaluator
 
 ```sh
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements-eval.txt
-PREDICT_ALLOW_LOCAL=1 .venv/bin/python test_eval.py
+PREDICT_ALLOW_LOCAL=0 .venv/bin/python test_eval.py
 ```
 
-The local flag only verifies the evaluator's output contract. Before final submission, leave `PREDICT_ALLOW_LOCAL=0` and run against the hosted QuickML service when sufficient inference quota is available:
+The original organizer evaluator and sample input remain byte-identical to the starter kit. The recorded live run returned **`SUCCESS` for all 1,000 rows**. This check establishes output shape, count and finiteness; it does not measure hidden-test accuracy.
+
+## Input contract
+
+| Column | Meaning | Accepted input |
+| --- | --- | --- |
+| `timestamp` | Hour used by calendar features and dispatch rules | `YYYY-MM-DD HH:MM:SS`, on the hour |
+| `ambient_temp_c` | Ambient temperature in °C | −60 to 65 |
+| `humidity_pct` | Relative humidity in % | 0 to 100 |
+| `solar_irradiance_wm2` | Solar irradiance in W/m² | 0 to 1,500 |
+
+The dashboard requires **exactly 24 rows in ascending order, one hour apart**, with no gaps or duplicates. The prediction function accepts independent rows and preserves their supplied order. Blank weather cells, `None` and floating-point NaN values use medians from the training dataset. Missing required columns, malformed numbers, infinity and out-of-range inputs fail validation.
+
+Timestamps represent timezone-unspecified wall-clock values. The controller uses the hour as supplied and does not convert it to the browser’s timezone.
+
+## Dispatch rules
+
+| Condition | Required result |
+| --- | --- |
+| Demand **>160 kW** **OR** hour **18–22 inclusive** | `renewable_storage` |
+| Neither storage condition applies | `main_grid` |
+| Demand **≥200 kW** | Independent critical overload alert |
+
+At exactly **160 kW**, the demand threshold alone does not select storage. At **18:00** and **22:00**, the evening override applies. The overload check runs independently of source selection.
+
+### Battery model
+
+Each row spans one hour. Demand in kW multiplied by that hour gives energy in kWh.
+
+| Setting | Default |
+| --- | ---: |
+| Capacity | 4,000 kWh |
+| Initial charge | 80% |
+| Protected reserve | 20% |
+| Grid charging rate | 80 kW |
+| Maximum discharge | 350 kW |
+| Charge/discharge efficiency | 95% |
+
+Storage delivery respects available energy above reserve, discharge efficiency and output-power limits. Main-grid hours serve the load from the grid and recharge the battery at the configured rate. Solar irradiance is a forecasting feature; the simulator does not invent panel capacity or solar generation.
+
+A shortfall alert identifies storage demand the battery cannot serve. It does **not** rewrite the required dispatch mode. Capacity advice estimates feasibility for the selected forecast and assumptions, without optimizing market costs or sizing an installation across a full year. Exported control commands have `dry_run: true` and no connection to physical hardware.
+
+## Model and evidence
+
+### Published QuickML model
+
+| Metric | Recorded result |
+| --- | ---: |
+| RMSE | **8.2733 kW** |
+| MAE | **6.54336 kW** |
+| R² | **0.97293** |
+| Supplied labeled training rows | **4,000** |
+
+These results come from **QuickML’s built-in model evaluation**, whose split AutoML controls. They are not a competition hidden-test score. Exact model identifiers and metric provenance are in [quickml-evaluation.json](models/quickml-evaluation.json).
+
+### Verification record
+
+| Check | Recorded outcome | Evidence |
+| --- | --- | --- |
+| Unit and API checks | 36 passed | [Verification record](docs/VALIDATION.md) and [tests](tests/test_energy.py) |
+| Original evaluator, live QuickML | `SUCCESS`, 1,000 rows, local preview disabled | [Self-test transcript](validation/official-self-test.txt) |
+| Full CSV CLI, live QuickML | 1,000 finite predictions, exact headers and timestamp order | [Prediction CSV](validation/quickml_predictions.csv) and [hashes/metadata](validation/live-evaluation.json) |
+| Saved forecast durability | Restored after a physical AppSail redeployment | [Redeployment check](validation/history-redeployment.txt) |
+| Session isolation | Different browser session received HTTP 404 for a saved run | [Verification record](docs/VALIDATION.md) |
+| Mobile layout | 390-pixel page width with no horizontal page overflow | [Mobile preview](docs/mobile-preview.png) |
+
+Run the local checks:
 
 ```sh
-.venv/bin/python test_eval.py
+python3 -m unittest discover -s tests -v
+node --check static/app.js
 ```
 
-Passing `test_eval.py` establishes output shape/count/finiteness, not accuracy or successful cloud deployment.
+### Local benchmark and reproducibility
 
-## Model training and reproducibility
+The local preview selects a weather/hour-interaction regression through expanding chronological folds and a one-standard-error simplicity policy. On the same later 800-row development segment, it reports **9.2494 kW RMSE**, compared with **11.7753 kW** for the original ridge baseline, a **21.45% reduction**. Its MAE is **7.4241 kW**.
 
-The checked-in selected model is ready to use without scientific inference dependencies. To reproduce the comparison:
+These are retrospective development comparisons. The local benchmark and QuickML evaluation use different splits and cannot establish a direct ranking between the served models.
 
 ```sh
 python3 -m venv .venv-training
@@ -160,56 +221,146 @@ python3 -m venv .venv-training
 python3 scripts/prepare_quickml.py
 ```
 
-The benchmark compares the original ridge, a richer weather/hour-interaction regression, boosted trees, and a ridge-plus-residual-boosting model. Two expanding chronological folds use 1,600→400 and 2,400→400 rows. A simplicity rule selects the least complex model within one fold standard error of the lowest rolling RMSE. A later 800-row development holdout reports comparison error; the final point model is refitted on all 4,000 labeled rows.
+The comparison and selection policy live in [benchmark.json](models/benchmark.json). `scripts/prepare_quickml.py` exports the shared engineered features plus the target to `data/quickml_training.csv`.
 
-A 400-row chronological calibration segment supplies an absolute-residual reference radius of **17.3449 kW**. Its empirical coverage on the later development segment is **94.62%**. The UI labels this as a 90% empirical residual reference band; temporal dependence, seasonal changes, and final refitting mean it has **no guaranteed future coverage**. The local band is never attached to a different QuickML model.
+The local preview can display a **90% empirical residual reference band**, with a recorded 17.3449 kW radius and 94.62% coverage on a later development segment. Temporal dependence, seasonal shift and final refitting prevent any guaranteed future coverage claim. QuickML predictions do not inherit that local interval.
 
-The selected model and report are stored in `models/local-preview.json` and `models/benchmark.json`. All candidate models that use trees are exported and checked against scikit-learn during benchmarking; serving does not require scikit-learn.
+Research and implementation decisions: [forecasting methods, chronological validation and battery feasibility](docs/RESEARCH.md).
 
-`python3 scripts/train_local.py` reproduces the original baseline into `models/legacy-preview.json` without replacing the selected model.
+## API
 
-`data/quickml_training.csv` contains the exact richer engineered feature columns plus the target. Set `QUICKML_FEATURE_SCHEMA=engineered` for a QuickML model trained on that export. Raw-schema endpoints still accept only the original four input columns. No unprovided demand lags or future labels are used.
+All API routes share the application origin. POST routes accept `application/json` and reject bodies larger than 1 MB. Saved runs belong to the session cookie, so retain the same cookie when listing, restoring or exporting them.
 
-## Battery simulation assumptions
+| Method | Route | Purpose |
+| --- | --- | --- |
+| GET | `/api/health` | Service/configuration metadata, recorded model metrics and history backend |
+| GET | `/api/sample?offset=9` | 24 consecutive rows from the supplied historical sample |
+| POST | `/api/forecast` | Validate 24 rows, predict, evaluate dispatch, simulate battery and save a run |
+| POST | `/api/predict` | QuickML inference for 1–100 independent rows, preserving order |
+| POST | `/api/scenario` | Compare battery settings for an existing `run_id` without new model inference |
+| GET | `/api/history` | Up to 20 recent runs for the session |
+| GET | `/api/runs/<id>` | Restore a session-owned forecast |
+| GET | `/api/runs/<id>/export` | Download the complete dispatch CSV |
+| GET | `/api/runs/<id>/signals` | Download scheduled commands and events as JSON |
 
-Battery charge is a planning simulation, not measured hardware state. Each row is one hour; demand in kW times one hour gives load energy in kWh.
+A forecast body contains `rows` or a `csv` string, `provider` (`quickml` or `local_preview`), and optional `battery` settings. The scenario body contains `run_id` and `battery`. The inference relay accepts `rows`.
 
-- In storage mode, delivered power is the minimum of demand, discharge power limit, and usable energy above reserve times discharge efficiency.
-- Stored energy decreases by delivered energy divided by efficiency.
-- In main grid mode the grid serves the load; the battery charges at the chosen grid charging rate, subject to capacity and charge efficiency.
-- Solar irradiance is a forecasting feature, not an assumed battery charging power. No unprovided panel area or solar conversion model is invented.
-- Insufficient battery capacity emits a shortfall alert. It **does not change** the mandated grid-mode output.
-- The app emits plans and simulation results; it has no connection to actual switching hardware.
+<details>
+<summary><strong>Executable local forecast example</strong></summary>
 
-## Checks
+Start `python3 app.py` in another terminal, then run:
 
 ```sh
-python3 -m unittest discover -s tests -v
-node --check static/app.js
+python3 - <<'PY'
+import json
+from urllib.request import Request, urlopen
+
+base = 'http://127.0.0.1:8080'
+with urlopen(base + '/api/sample?offset=9') as response:
+    rows = json.load(response)['rows']
+payload = {'provider': 'local_preview', 'rows': rows}
+request = Request(base + '/api/forecast',
+                  data=json.dumps(payload).encode(),
+                  headers={'Content-Type': 'application/json'}, method='POST')
+with urlopen(request) as response:
+    run = json.load(response)
+print(json.dumps({'id': run['id'], 'summary': run['summary']}, indent=2))
+PY
 ```
 
-36 tests cover exact threshold boundaries, independent overloads, inclusive evening hours, battery energy balance and reserve, missing-value cleanup, invalid data, response parsing, ordered QuickML calls, no silent fallback, API persistence/export/session isolation, and static-file access restrictions.
+Change the provider to `quickml` only on a server configured for live QuickML.
 
-## Catalyst deployment
+</details>
 
-See [docs/CATALYST_DEPLOYMENT.md](docs/CATALYST_DEPLOYMENT.md). Production serves the same frontend and API through AppSail and Gunicorn. The example configuration reads Catalyst's assigned listen port and uses Python 3.12. Runtime dependencies must be included in the uploaded build.
+The API reports validation errors as HTTP **422**, upstream inference failures as **502**, and cloud-history failures as **503**. `/api/health` reports configuration presence; a successful QuickML forecast verifies actual connectivity.
 
-Hosted history uses Catalyst Data Store table `GridLensRuns`, with USER scope, server-only SELECT/INSERT access, and a SHA-256 browser-session ownership check on every lookup. Records survive instance restarts and redeployments. Local development uses SQLite. The browser cookie expires after seven days; clearing it removes access to that browser’s saved runs. Parsed telemetry and forecasts are retained; raw uploaded files are not archived separately. Stratus and Slate are recommendations in the brief; the required public deployment supports AppSail, which serves this frontend and backend together.
+## Cloud configuration
 
-## Final submission checklist
+The existing demo runs on **Catalyst AppSail, Python 3.12, 256 MB**, in the India data center’s Development environment. Its published QuickML model and durable Data Store history are configured. [Cloud status](docs/CLOUD_STATUS.md) records the deployment identifiers.
 
-- [x] Train and publish the team QuickML regression model.
-- [x] Verify the endpoint request shape, engineered feature schema, managed authentication, and prediction response.
-- [x] Run the dashboard and the original evaluator in live QuickML mode.
-- [x] Deploy to Zoho Catalyst and verify the public URL end to end.
-- [x] Include full frontend/backend, `predict.py`, `energy/`, `models/`, and this README in the repository or source ZIP.
-- [x] Keep all credentials out of source control and archives.
-- [ ] Submit the public app URL and public repository/source ZIP through the official form by **28 October 2026**. The email does not specify a cutoff time or timezone.
+| Variable | Hosted configuration / purpose |
+| --- | --- |
+| `GRIDLENS_PUBLIC_ORIGIN` | Exact public HTTPS application origin |
+| `GRIDLENS_HISTORY_TABLE` | `92358000000019001` for this deployment’s `GridLensRuns` table |
+| `GRIDLENS_DATA_DIR` | `/tmp/gridlens` for temporary/local fallback storage |
+| `QUICKML_AUTH_MODE` | `catalyst` for request-scoped managed authentication |
+| `QUICKML_PROJECT_ID` | `92358000000016001` for this deployment |
+| `ZOHO_ORG_ID` | `60093095288` for this deployment |
+| `QUICKML_FEATURE_SCHEMA` | `engineered`, matching the exported training features |
+| `QUICKML_REQUEST_MODE` | `batch`, verified against the published endpoint |
+| `QUICKML_ENDPOINT_KEY` | Private endpoint key, supplied only through server configuration |
 
-Official references: [QuickML endpoint authentication](https://docs.catalyst.zoho.com/en/quickml/help/pipeline-endpoints/), [QuickML inference response](https://docs.catalyst.zoho.com/en/sdk/python/v1/quickml/execute-custom-ml-endpoint/), [AppSail configuration](https://docs.catalyst.zoho.com/en/serverless/help/appsail/appsail-configurations/).
+Local preview requires none of these variables. For a separate deployment, use its own project/table identifiers, public origin and endpoint key. For direct local QuickML access, copy [.env.example](.env.example) to `.env` and follow the [QuickML setup guide](docs/QUICKML_SETUP.md). Process environment variables take precedence over `.env`.
 
-## Submission readiness
+The checked-in `app-config.json` contains **non-secret configuration only**. Preserve private runtime variables when redeploying: a linked CLI deployment can replace the environment configuration. The current demo uses the console-managed deployment workflow.
 
-The original, byte-identical organizer self-test returned **SUCCESS on all 1,000 rows using live QuickML**, with local preview disabled. The full CLI also produced exactly 1,000 finite predictions with the original timestamp order and required two-column CSV. Evidence and output are in `validation/`; the requirement-by-requirement mapping is in `docs/REQUIREMENTS_AUDIT.md`.
+### Storage and access
 
-Submit the public application URL above with `GridLens_Submission.zip`. The package includes frontend/backend code, the configured prediction script, original evaluator and sample inputs, training data, README, research and verification evidence. It excludes credentials, local environments and runtime databases. The organizer’s deadline is 28 October 2026; no cutoff time was supplied.
+Hosted history uses Data Store with USER scope, server-only SELECT/INSERT permissions and a SHA-256 session-ownership filter on every lookup. Local development uses SQLite. The browser cookie is HttpOnly and SameSite=Lax, carries a seven-day max-age, and uses Secure on the configured HTTPS deployment. Clearing or expiring it removes that browser’s access to its saved runs.
+
+Records retain parsed telemetry and forecasts. Raw uploaded files are not archived separately. Public forecasting is available for the demo; the application does not implement user accounts or a per-user inference quota. Additional access and usage controls would be needed for an unrestricted long-term service.
+
+### Build and deploy
+
+Use Python 3.12 when preparing the AppSail bundle:
+
+```sh
+python3 scripts/package.py --install-deps --zip
+```
+
+This creates `GridLens_AppSail.zip` with runtime code and universal-wheel dependencies. The startup command is:
+
+```sh
+python3 -m gunicorn -c gunicorn.conf.py app:application
+```
+
+Gunicorn reads Catalyst’s assigned `X_ZOHO_CATALYST_LISTEN_PORT`. Build contents, console deployment and verification steps are in the [Catalyst deployment guide](docs/CATALYST_DEPLOYMENT.md).
+
+For a source archive:
+
+```sh
+python3 scripts/package.py --source
+```
+
+`GridLens_Source.zip` includes the source, documentation, presentation and validation evidence. It excludes credentials, local environments, runtime databases and deployment build directories.
+
+## Project structure
+
+```text
+GridLens/
+├── app.py                      # WSGI API, static serving and run orchestration
+├── predict.py                  # Organizer inference function and CSV CLI
+├── energy/
+│   ├── telemetry.py            # CSV parsing and input validation
+│   ├── features.py             # Shared training/inference feature preparation
+│   ├── quickml.py              # QuickML adapter and response validation
+│   ├── catalyst.py             # Managed cloud authentication
+│   ├── controller.py           # Dispatch rules, battery model and command log
+│   ├── analytics.py            # Diagnostics and capacity feasibility advice
+│   └── history.py              # Durable session-scoped cloud history
+├── static/                     # Responsive frontend and SVG charts
+├── data/                       # Supplied training data and engineered export
+├── models/                     # Local model, benchmark and QuickML provenance
+├── scripts/                    # Training, comparison and packaging tools
+├── tests/                      # Unit and API verification
+├── validation/                 # Official evaluator and live inference evidence
+├── docs/                       # Research, setup, requirement audit and screenshots
+└── presentation/               # PowerPoint, image assets and slide previews
+```
+
+## Presentation and documentation
+
+- [7-slide PowerPoint](presentation/GridLens_neevmodh205.pptx): product screenshots, editable diagrams, a native forecast chart and clickable links.
+- [Requirement audit](docs/REQUIREMENTS_AUDIT.md): mapping from the challenge requirements to implementation and verification.
+- [Validation record](docs/VALIDATION.md): completed checks and their practical limits.
+- [Cloud deployment record](docs/CLOUD_STATUS.md): deployed services, model and history configuration.
+- [Research and design decisions](docs/RESEARCH.md): source references, local benchmarks and simulation assumptions.
+- [QuickML setup](docs/QUICKML_SETUP.md) and [AppSail deployment](docs/CATALYST_DEPLOYMENT.md): configuration and reproducibility guides.
+
+## Submission status
+
+The live application, source repository, inference entry point and presentation are complete. The original evaluator passed using live QuickML. The source ZIP provides an additional packaging option.
+
+**The organizer’s submission form has not been submitted.** The announced deadline is **28 October 2026**; the email specifies no cutoff time or timezone.
+
+Built by **Neev Modh**, solo participant under team name **neevmodh205**.

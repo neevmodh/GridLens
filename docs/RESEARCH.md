@@ -24,7 +24,7 @@ All methods use only the supplied training labels and weather/time inputs. Riche
 
 The one-standard-error simplicity policy chooses weather + hourly interactions. The small CV difference from boosted trees does not justify the more complex model under this policy. The two folds have substantial variation; this is not a definitive model ranking across all seasons.
 
-On the same later 800-row development segment used in the initial project, the selected model scores **9.2494 kW RMSE**, versus **11.7753 kW** for the original ridge, a **21.45% reduction**. MAE is **7.4241 kW**. Results are retrospective development comparisons: this segment has been inspected during development, and no preregistered or external untouched-test claim is made. The actual hidden-test and QuickML outcomes are still unknown.
+On the same later 800-row development segment used in the initial project, the selected model scores **9.2494 kW RMSE**, versus **11.7753 kW** for the original ridge, a **21.45% reduction**. MAE is **7.4241 kW**. Results are retrospective development comparisons: this segment has been inspected during development, and no preregistered or external untouched-test claim is made. Hidden-test accuracy remains unknown. The published QuickML model now has a separate built-in evaluation recorded in [models/quickml-evaluation.json](../models/quickml-evaluation.json).
 
 ## Uncertainty implementation
 
@@ -44,7 +44,7 @@ The scenario API reuses a saved, browser-scoped forecast. It does not make new Q
 
 ## Product changes
 
-- Full-width light operations website, replacing the sidebar that compressed the first preview.
+- Light operations workspace with a desktop navigation sidebar and responsive top navigation on narrower screens.
 - Readable navigation and typography; large demand and SOC charts; useful hour selection.
 - Immediate risk summary linking directly to capacity testing.
 - Model comparison and research references visible in the application.
