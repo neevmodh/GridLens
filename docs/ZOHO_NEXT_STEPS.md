@@ -1,14 +1,13 @@
-# Final submission steps
+# Completed delivery and submission
 
-The separate GridLens Catalyst project, trained and published QuickML model, public AppSail website, durable Data Store history and live 1,000-row official self-test are complete.
+GridLens is deployed on Catalyst AppSail with a published QuickML model and durable Data Store history. The original 1,000-row evaluator returned SUCCESS using live QuickML.
 
-Public app: https://gridlens-50047133296.development.catalystappsail.in
+The official HackSphere 3.0 project form has been submitted. Google Forms confirmed: “Your response has been recorded.” The submission includes the public application, GitHub repository and seven-page PDF presentation for solo team neevmodh205.
 
-1. Open the public app and review its live QuickML forecast, input form, CSV upload, source-switching signals and overload alerts.
-2. Submit this public app URL and GridLens_Submission.zip (or a public repository containing the same source).
-3. Include the supplied README and configured predict.py. The original evaluator returned SUCCESS; validation/ contains its transcript, a full 1,000-row live prediction CSV and hashes.
-4. Complete the organizer’s form before 28 October 2026. No precise cutoff time was supplied in the email.
+- [Live application](https://gridlens-50047133296.development.catalystappsail.in/)
+- [Source repository](https://github.com/neevmodh/GridLens)
+- [Presentation PDF](../presentation/GridLens_neevmodh205.pdf)
+- [Submission record](SUBMISSION.md)
+- [Requirement audit](REQUIREMENTS_AUDIT.md)
 
-No account password, OAuth token or endpoint secret should be put in chat or in the submission ZIP. The app uses managed server authentication. Deployment was completed through the authenticated console; the local CLI device login was not completed and is not required to use the live app or submission script.
-
-See REQUIREMENTS_AUDIT.md for the required-feature mapping. Slate and Stratus are recommended architecture choices in the brief; AppSail is explicitly accepted for the required public app URL. This implementation serves the frontend and backend together on AppSail and persists parsed telemetry and forecasts in Data Store.
+Keep cloud credentials private when maintaining the deployment. The current application uses managed server authentication and persists parsed telemetry and forecasts in Data Store. AppSail serves the frontend and backend together.

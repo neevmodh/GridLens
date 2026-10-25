@@ -37,4 +37,4 @@ The brief labels its service table as a recommended architecture and explicitly 
 
 The hidden test dataset is unavailable, so no hidden-test accuracy or winning rank is claimed. QuickML built-in RMSE is 8.2733 kW; it uses a different evaluation split from the local benchmark. Battery state and controller commands are simulations with no physical hardware connected. History is browser-session scoped: clearing or expiring the cookie removes that browser’s access. Raw uploaded files are not archived separately. Account usage limits and service availability apply.
 
-The app and code are ready for submission. The organizer’s form has not been submitted; team/participant details and the final submission remain with the participant. Deadline: 28 October 2026, with no exact cutoff supplied in the email.
+The official project form has been submitted for team neevmodh205 as a solo entry. It includes the public application URL, repository URL and seven-page PDF presentation. Google Forms confirmed: “Your response has been recorded.” See [SUBMISSION.md](SUBMISSION.md).

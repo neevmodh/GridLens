@@ -8,7 +8,7 @@ A working Zoho Catalyst application that turns hourly weather telemetry into a 2
 
 **Team neevmodh205 · Neev Modh · Solo participant · HackSphere 3.0**
 
-[**Live application**](https://gridlens-50047133296.development.catalystappsail.in/) &nbsp; · &nbsp; [**7-slide presentation**](presentation/GridLens_neevmodh205.pptx) &nbsp; · &nbsp; [**Requirement audit**](docs/REQUIREMENTS_AUDIT.md) &nbsp; · &nbsp; [**Verification evidence**](docs/VALIDATION.md)
+[**Live application**](https://gridlens-50047133296.development.catalystappsail.in/) &nbsp; · &nbsp; [**Presentation PDF**](presentation/GridLens_neevmodh205.pdf) &nbsp; · &nbsp; [**Editable PowerPoint**](presentation/GridLens_neevmodh205.pptx) &nbsp; · &nbsp; [**Requirement audit**](docs/REQUIREMENTS_AUDIT.md) &nbsp; · &nbsp; [**Verification evidence**](docs/VALIDATION.md)
 
 ![GridLens concept illustration: campus buildings, solar panels, battery storage and grid connections](presentation/assets/microgrid-cover.png)
 
@@ -26,7 +26,8 @@ A working Zoho Catalyst application that turns hourly weather telemetry into a 2
 | Forecast inputs | Timestamp, ambient temperature, humidity and solar irradiance |
 | Interface | Responsive operations dashboard, CSV/form ingestion and battery scenario lab |
 | Saved runs | Durable, browser-session-scoped Catalyst Data Store records |
-| Deliverables | Live website, full source, `predict(input_df)`, CSV CLI and presentation |
+| Deliverables | Live website, full source, `predict(input_df)`, CSV CLI, presentation PDF and editable PowerPoint |
+| Submission | **Confirmed** through the official HackSphere 3.0 form |
 | Verification record | 24 October 2026: 36 tests passed, official 1,000-row evaluator returned `SUCCESS` using live QuickML |
 
 **GridLens keeps forecast accuracy, policy compliance and battery feasibility separate.** The published model predicts demand. The controller applies the challenge’s exact rules. The battery simulation reports whether the selected storage plan can serve the scheduled load.
@@ -345,12 +346,14 @@ GridLens/
 ├── tests/                      # Unit and API verification
 ├── validation/                 # Official evaluator and live inference evidence
 ├── docs/                       # Research, setup, requirement audit and screenshots
-└── presentation/               # PowerPoint, image assets and slide previews
+└── presentation/               # Submission PDF, PowerPoint, images and slide previews
 ```
 
 ## Presentation and documentation
 
-- [7-slide PowerPoint](presentation/GridLens_neevmodh205.pptx): product screenshots, editable diagrams, a native forecast chart and clickable links.
+- [7-page presentation PDF](presentation/GridLens_neevmodh205.pdf): the presentation in the format required by the submission form, with clickable demo and repository links.
+- [Editable PowerPoint](presentation/GridLens_neevmodh205.pptx): product screenshots, editable diagrams, a native forecast chart and speaker notes.
+- [Submission record](docs/SUBMISSION.md): the confirmed form response and submitted deliverables.
 - [Requirement audit](docs/REQUIREMENTS_AUDIT.md): mapping from the challenge requirements to implementation and verification.
 - [Validation record](docs/VALIDATION.md): completed checks and their practical limits.
 - [Cloud deployment record](docs/CLOUD_STATUS.md): deployed services, model and history configuration.
@@ -359,8 +362,10 @@ GridLens/
 
 ## Submission status
 
-The live application, source repository, inference entry point and presentation are complete. The original evaluator passed using live QuickML. The source ZIP provides an additional packaging option.
+**Submitted successfully through the official HackSphere 3.0 project form.** Google Forms displayed **“Your response has been recorded.”**
 
-**The organizer’s submission form has not been submitted.** The announced deadline is **28 October 2026**; the email specifies no cutoff time or timezone.
+The submission used team **neevmodh205**, solo participant **Neev Modh**, the public Catalyst application, the GitHub repository and the seven-page PDF presentation. The extra team-member fields remained blank. See the [submission record](docs/SUBMISSION.md).
+
+The original evaluator passed using live QuickML. The repository retains the source, setup guides, verification evidence and editable presentation. Hidden-test accuracy and competition results remain unknown.
 
 Built by **Neev Modh**, solo participant under team name **neevmodh205**.

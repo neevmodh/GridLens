@@ -4,7 +4,8 @@
 **Participant:** Neev Modh, solo  
 **Event:** HackSphere 3.0
 
-[Download the PowerPoint](GridLens_neevmodh205.pptx)
+[Download the submission PDF](GridLens_neevmodh205.pdf)<br>
+[Download the editable PowerPoint](GridLens_neevmodh205.pptx)
 
 ## Seven slides
 
